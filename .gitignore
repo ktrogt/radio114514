@@ -1,0 +1,6 @@
+# Local secrets (robot Wi-Fi password). Template: ESP32/rc_esp32/rc_secrets.example.h
+ESP32/rc_esp32/rc_secrets.h
+
+# STM32CubeIDE build outputs
+Firmware/Debug/
+Firmware/Release/

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="rc-websocket-port" content="@@RC_WEBSOCKET_PORT@@">
+  <title>GC RC 操作</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/controls.js"></script>
+</head>
+<body data-mode="keyboard">
+  <main>
+    <header>
+      <h1>GC RC 操作</h1>
+      <div class="segments modes" role="group" aria-label="操作方法">
+        <button id="mode-keyboard" type="button" aria-pressed="true">キーボード</button>
+        <button id="mode-stick" type="button" aria-pressed="false">スティック</button>
+        <button id="mode-controller" type="button" aria-pressed="false">コントローラー</button>
+      </div>
+      <p id="connection" role="status">ロボット未接続 · WebSocket 再接続中</p>
+      <p class="stick-heading">向き <strong id="stick-heading">—</strong></p>
+    </header>
+    <section class="robot-state" aria-label="操作状態">
+      <div id="badge" class="badge idle" role="status">接続待ち</div>
+      <p id="fault" class="fault" role="alert" hidden></p>
+      <p id="busy" class="fault" hidden>別のブラウザーが接続中です</p>
+      <button id="stop" type="button">停止 / 解除 <kbd>Esc</kbd></button>
+    </section>
+    <p id="pairing" class="pairing" hidden></p>
+    <p class="portrait-hint">横向きがおすすめです</p>
+    <section id="stick-panel" class="stick-panel" aria-label="スティック操作" hidden>
+      <div class="stick-control turn-control">
+        <div id="turn-stick" class="stick-base throttle-base" aria-label="速度・旋回スティック">
+          <span class="throttle-track" aria-hidden="true"></span>
+          <span id="turn-knob" class="stick-knob" aria-hidden="true"></span>
+        </div>
+        <strong class="stick-label">速度・旋回</strong>
+        <span id="throttle" class="throttle-value">速度 50%</span>
+      </div>
+      <div class="touch-actions">
+        <button id="touch-kick" class="touch-button" type="button">キック</button>
+        <button id="touch-dribbler" class="touch-button" type="button" aria-pressed="false">ドリブラー <small id="touch-dribbler-state">—</small></button>
+        <button id="touch-reset" class="touch-button" type="button">正面リセット</button>
+        <button id="touch-line" class="touch-button" type="button" aria-pressed="false">ライン補助 <small id="touch-line-state">—</small></button>
+        <button id="touch-stop" class="touch-button danger" type="button">停止</button>
+      </div>
+      <div class="stick-control move-control">
+        <div id="move-stick" class="stick-base" aria-label="移動スティック">
+          <span id="move-knob" class="stick-knob" aria-hidden="true"></span>
+        </div>
+        <strong class="stick-label">移動</strong>
+      </div>
+    </section>
+    <section id="controller-panel" class="controller-panel" aria-label="コントローラー操作" hidden>
+      <p id="controller-status" role="status">コントローラーのボタンを押してください</p>
+      <p id="controller-hint" hidden>スティックを中央に戻してください</p>
+      <table><thead><tr><th>操作</th><th>コントローラー</th></tr></thead><tbody>
+        <tr><td>移動</td><td>左スティック</td></tr>
+        <tr><td>向き</td><td>右スティックの左右</td></tr>
+        <tr><td>キック</td><td>下のボタン（Switch: B / Xbox: A）か ZR / RT</td></tr>
+        <tr><td>ドリブラー</td><td>右のボタン（Switch: A / Xbox: B）</td></tr>
+        <tr><td>ライン補助</td><td>左のボタン（Switch: Y / Xbox: X）</td></tr>
+        <tr><td>正面リセット</td><td>上のボタン（Switch: X / Xbox: Y）</td></tr>
+        <tr><td>ブースト</td><td>R / RB（押している間）</td></tr>
+        <tr><td>低速</td><td>ZL / LT（押している間）</td></tr>
+        <tr><td>停止 / 解除</td><td>− / View</td></tr>
+      </tbody></table>
+    </section>
+    <div class="details">
+    <div>
+    <dl class="status">
+      <div><dt>操作元</dt><dd id="owner">なし</dd></div>
+      <div><dt>向き</dt><dd id="heading">—</dd></div>
+      <div><dt>ライン補助</dt><dd id="line">—</dd></div>
+      <div><dt>ドリブラー</dt><dd id="dribbler">無効</dd></div>
+      <div><dt>速度モード</dt><dd id="speed">通常</dd></div>
+      <div><dt>キック</dt><dd id="kick">待機</dd></div>
+    </dl>
+    </div>
+    <section aria-label="キー操作">
+      <table><thead><tr><th>操作</th><th>キー</th></tr></thead><tbody>
+        <tr><td>移動</td><td><kbd>W</kbd> 前 / <kbd>S</kbd> 後 / <kbd>A</kbd> 左 / <kbd>D</kbd> 右</td></tr>
+        <tr><td>旋回</td><td><kbd>Q</kbd> 左 / <kbd>E</kbd> 右</td></tr>
+        <tr><td>キック</td><td><kbd>Space</kbd></td></tr>
+        <tr><td>ドリブラー 有効 / 無効</td><td><kbd>F</kbd></td></tr>
+        <tr><td>正面リセット</td><td><kbd>R</kbd>（移動・旋回キーを離す）</td></tr>
+        <tr><td>ライン補助 有効 / 無効</td><td><kbd>G</kbd></td></tr>
+        <tr><td>ブースト / 低速</td><td><kbd>Shift</kbd> / <kbd>C</kbd>（低速優先）</td></tr>
+        <tr><td>停止 / 解除</td><td><kbd>Esc</kbd></td></tr>
+      </tbody></table>
+    </section>
+    </div>
+    <footer>F446 <span id="firmware">—</span> · ゲームパッドがつながっているときはゲームパッドが優先されます</footer>
+  </main>
+  <div id="focus-overlay" class="overlay" hidden><button id="focus" type="button">クリックして操作</button></div>
+</body>
+</html>
